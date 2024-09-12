@@ -1,5 +1,5 @@
 {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "name": "spoob/unotis-laravel",
     "description": "Unotis API Laravel client library",
     "type": "library",
