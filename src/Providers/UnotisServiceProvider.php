@@ -33,7 +33,7 @@ class UnotisServiceProvider extends ServiceProvider
             'unotis',
         );
 
-        $this->app->bind('custom-package', function()
+        $this->app->bind('unotis-laravel', function()
         {
             return new UnotisClient(config('unotis.token'));
         });
