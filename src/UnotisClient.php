@@ -20,7 +20,7 @@ class UnotisClient implements iClient
     /**
      * @var string
      */
-    private string $version = '2';
+    private string $version = '1';
 
     /**
      * @var string
