@@ -1,5 +1,7 @@
 <?php namespace Spoob\UnotisLaravel\Interfaces;
 
+use Throwable;
+
 interface UnotisClient
 {
     /**
@@ -35,4 +37,14 @@ interface UnotisClient
      * @return string
      */
     function writeToTelegram(string $subject, string $text, string $url = null): string;
+
+    /**
+     * Catches application exception.
+     *
+     * @param Throwable $exception
+     * @param mixed $request
+     *
+     * @return void
+     */
+    function catchException(Throwable $exception, mixed $request, string $project_token): string;
 }

@@ -23,7 +23,7 @@ UNOTIS_TOKEN=%ВАШ_ТОКЕН%
 2. (необязательно) Опубликуйте файл конфигурации
 
 ```php
-php artisan vendor:publish -tag=unotis-config
+php artisan vendor:publish --tag=unotis-config
 ```
 
 ## Использование:
