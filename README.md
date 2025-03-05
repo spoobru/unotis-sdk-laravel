@@ -27,8 +27,11 @@ php artisan vendor:publish --tag=unotis-config
 ```
 
 ## Использование:
+
+Отправка сообщений
+
 ```
-use Spoob\UnotisLaravel\UnotisClient as Unotis;
+use Unotis;
 
 // Просто создать сообщение в системе
 $response = Unotis::createMessage('Тема сообщения', 'Текс сообщения');
@@ -38,4 +41,54 @@ $response = Unotis::sendEmail('example@email', 'Тема письма', 'Тек�
 
 // Создать сообщение и написать в Telegram
 $response = Unotis::writeToTelegram('Тема сообщения в Телеграм', 'Текст сообщения');
+```
+
+Отладка ошибок
+
+1. В .env укажите 
+```
+UNOTIS_PROJECT_TOKEN=%ТОКЕН_ПРОЕКТА%
+``` 
+
+2a. (Laravel < 11) Добавьте вызов `Unotis::catchException()` в метод **report()** класса **app\Exceptions\Handler.php**:
+
+
+```
+<?php
+
+use Unotis;
+...
+
+class Handler extends ExceptionHandler
+{
+    ...
+
+    public function report(Throwable $exception)
+    {
+        ...
+
+        if ($this->shouldReport($exception)) {
+            Unotis::catchException($exception);
+        }
+
+        ...
+    }
+}
+
+...
+```
+2b. (Laravel 11) Добавьте вызов `Unotis::catchException()` в **bootstrap/app.php**:
+
+```php
+...
+
+use Unotis;
+
+...
+->withExceptions(function (Exceptions $exceptions) {
+    $exceptions->report(function (InvalidOrderException $e) {
+        Unotis::catchException($exception);
+    });
+})
+...
 ```

@@ -1,9 +1,13 @@
 <?php namespace Spoob\UnotisLaravel;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Container\Container;
 use Spoob\UnotisLaravel\Bridge\UnotisRequest;
+use Spoob\UnotisLaravel\Serializers\ExceptionSerializer;
+use Spoob\UnotisLaravel\Serializers\RequestSerializer;
 use Spoob\UnotisLaravel\Exceptions\ProjectTokenNotSpecified;
 use Spoob\UnotisLaravel\Interfaces\UnotisClient as iClient;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Throwable;
 
 /**
@@ -11,7 +15,7 @@ use Throwable;
  *
  * @author SPOOB <info@spoob.ru>
  * @package UnotisLaravel
- * @version 2.0.0
+ * @version 2.1.0
  */
 class UnotisClient implements iClient
 {
@@ -35,6 +39,9 @@ class UnotisClient implements iClient
      */
     private bool $use_curl;
 
+    private ExceptionSerializer $exceptionSerializer;
+    private RequestSerializer $requestSerializer;
+
     /**
      * @param string $token
      * @param bool $use_curl
@@ -43,6 +50,8 @@ class UnotisClient implements iClient
     {
         $this->token = $token;
         $this->use_curl = $use_curl;
+        $this->exceptionSerializer = new ExceptionSerializer();
+        $this->requestSerializer = new RequestSerializer();
     }
 
     /**
@@ -99,7 +108,7 @@ class UnotisClient implements iClient
      *
      * @throws ProjectTokenNotSpecified
      */
-    public function catchException(Throwable $exception, mixed $request = null, ?string $project_token = null): string
+    public function catchException(Throwable $exception, ?SymfonyRequest $request = null, ?string $project_token = null): string
     {
         if (empty($project_token)) {
             $projectTokenFromConfig = Config::get('unotis.project_token');
@@ -109,7 +118,12 @@ class UnotisClient implements iClient
             $project_token = $projectTokenFromConfig;
         }
 
-        $exception = serialize($exception);
+        if (empty($request)) {
+            $request = Container::getInstance()->make('request', []);
+        }
+
+        $exception = $this->exceptionSerializer->serialize($exception);
+        $request = $this->requestSerializer->serialize($request);
 
         return $this->postRequest('issue/catch', compact('exception', 'request', 'project_token'));
     }
@@ -128,7 +142,7 @@ class UnotisClient implements iClient
      * Raw request.
      *
      * @param string $type
-     * @param array $data
+     * @param array<array{exception: string, request: string, project_token: string}> $data
      *
      * @return string
      */

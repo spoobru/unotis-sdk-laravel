@@ -1,5 +1,6 @@
 <?php namespace Spoob\UnotisLaravel\Interfaces;
 
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Throwable;
 
 interface UnotisClient
@@ -41,10 +42,11 @@ interface UnotisClient
     /**
      * Catches application exception.
      *
-     * @param Throwable $exception
-     * @param mixed $request
+     * @param Throwable      $exception
+     * @param SymfonyRequest $request
+     * @param string         $project_token
      *
-     * @return void
+     * @return string
      */
-    function catchException(Throwable $exception, mixed $request, string $project_token): string;
+    function catchException(Throwable $exception, SymfonyRequest $request, string $project_token): string;
 }
