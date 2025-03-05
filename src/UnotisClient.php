@@ -15,14 +15,14 @@ use Throwable;
  *
  * @author SPOOB <info@spoob.ru>
  * @package UnotisLaravel
- * @version 2.1.0
+ * @version 2.1.1
  */
 class UnotisClient implements iClient
 {
     /**
      * @var string
      */
-    const API_URL = 'https://formando.unotis.ru/api/';
+    const API_URL = 'https://unotis.ru/api/';
 
     /**
      * @var string
